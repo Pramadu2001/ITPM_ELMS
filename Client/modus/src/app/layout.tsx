@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Chat from "./Components/Chat";
+"use client";
 
+import { Geist, Geist_Mono } from "next/font/google"; 
+import "./globals.css";
+import Chat from "./Components/Ui/Chat"; 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MessagesProvider } from '@/context/messages';
+
+// Correct Google Font imports
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -13,10 +17,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Modus E-Learning",
-  description: "Modus E-Learning with smart road mapper",
-};
+// Create a single QueryClient instance
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -25,11 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-       <Chat/>
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <QueryClientProvider client={queryClient}>
+          <MessagesProvider>
+            <Chat />
+            {children}
+          </MessagesProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
